@@ -32,7 +32,7 @@ func (p *productController) GetProducts(ctx *gin.Context) {
 
 func (p *productController) GetProducById(ctx *gin.Context) {
 
-	id := ctx.Param("id")
+	id := ctx.Param("id_product")
 	if id == "" {
 		response := model.Response{
 			Message: "Informe o Id do produto",
@@ -52,13 +52,22 @@ func (p *productController) GetProducById(ctx *gin.Context) {
 		return
 	}
 
-	products, err := p.productUsecase.GetProductById(productId)
+	product, err := p.productUsecase.GetProductById(productId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, products)
+	if product == nil {
+		response := model.Response{
+			Message: "Produto não encontrado",
+		}
+
+		ctx.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, product)
 }
 
 func (p *productController) CreateProduct(ctx *gin.Context) {

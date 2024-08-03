@@ -16,17 +16,17 @@ func NewProductRepository(connection *sql.DB) ProductRepository {
 	}
 }
 
-func (pr *ProductRepository) GetProductById(id_product int) (model.Product, error) {
+func (pr *ProductRepository) GetProductById(id_product int) (*model.Product, error) {
 
 	query, err := pr.connection.Prepare("SELECT id, product_name, price FROM product WHERE id = $1")
 	if err != nil {
 		fmt.Println(err)
-		return model.Product{}, err
+		return nil, err
 	}
 
 	var product model.Product
 
-	err = query.QueryRow(query).Scan(
+	err = query.QueryRow(id_product).Scan(
 		&product.Id,
 		&product.Name,
 		&product.Price,
@@ -34,14 +34,14 @@ func (pr *ProductRepository) GetProductById(id_product int) (model.Product, erro
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return model.Product{}, nil
+			return nil, nil
 		}
 
-		return model.Product{}, err
+		return nil, err
 	}
 
 	query.Close()
-	return product, nil
+	return &product, nil
 
 }
 

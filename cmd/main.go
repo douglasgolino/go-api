@@ -30,6 +30,8 @@ func main() {
 		})
 	})
 
+	server.GET("/product/:id_product", ProductController.GetProducById)
+
 	server.GET("/products", ProductController.GetProducts)
 
 	server.POST("/product", ProductController.CreateProduct)

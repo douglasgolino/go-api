@@ -19,10 +19,10 @@ func (pu *ProductUsecase) GetProducts() ([]model.Product, error) {
 	return pu.repository.GetProducts()
 }
 
-func (pu *ProductUsecase) GetProductById(id_product int) (model.Product, error) {
+func (pu *ProductUsecase) GetProductById(id_product int) (*model.Product, error) {
 	product, err := pu.repository.GetProductById(id_product)
 	if err != nil {
-		return model.Product{}, nil
+		return nil, nil
 	}
 
 	return product, nil
