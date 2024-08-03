@@ -18,8 +18,8 @@ func NewProductRepository(connection *sql.DB) ProductRepository {
 
 func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
 
-	sql := "SELECT id, product_name, price FROM product"
-	rows, err := pr.connection.Query(sql)
+	query := "SELECT id, product_name, price FROM product"
+	rows, err := pr.connection.Query(query)
 	if err != nil {
 		fmt.Println(err)
 		return []model.Product{}, err
@@ -50,18 +50,18 @@ func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
 func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
 
 	var id int
-	sql, err := pr.connection.Prepare("INSERT INTO product (product_name, price) VALUES ($1,$2) RETURNING id")
+	query, err := pr.connection.Prepare("INSERT INTO product (product_name, price) VALUES ($1,$2) RETURNING id")
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
 	}
 
-	err = sql.QueryRow(product.Name, product.Price).Scan(&id)
+	err = query.QueryRow(product.Name, product.Price).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
 	}
 
-	sql.Close()
+	query.Close()
 	return id, nil
 }
