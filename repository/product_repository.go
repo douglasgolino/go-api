@@ -94,3 +94,21 @@ func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
 	query.Close()
 	return id, nil
 }
+
+func (pr *ProductRepository) UpdateProduct(productId int, product model.Product) error {
+
+	query, err := pr.connection.Prepare("UPDATE product SET product_name = $1, price = $2 WHERE id = $3 RETURNING id")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = query.QueryRow(product.Name, product.Price, productId).Scan(&productId)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	query.Close()
+	return nil
+}

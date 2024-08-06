@@ -36,5 +36,7 @@ func main() {
 
 	server.POST("/product", ProductController.CreateProduct)
 
+	server.PUT("/product/:id_product", ProductController.UpdateProduct)
+
 	server.Run(":8000")
 }

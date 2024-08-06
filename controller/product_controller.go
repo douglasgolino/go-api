@@ -87,3 +87,41 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, insertedProduct)
 }
+
+func (p *productController) UpdateProduct(ctx *gin.Context) {
+
+	id := ctx.Param("id_product")
+	if id == "" {
+		response := model.Response{
+			Message: "Informe o Id do produto",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+	if err != nil {
+		response := model.Response{
+			Message: "Id do produto precisa ser um número inteiro",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var product model.Product
+
+	err = ctx.BindJSON(&product)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+
+	err = p.productUsecase.UpdateProduct(productId, product)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	ctx.JSON(http.StatusNoContent, nil)
+}
