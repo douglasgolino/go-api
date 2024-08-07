@@ -40,12 +40,12 @@ func (pu *ProductUsecase) CreateProduct(product model.Product) (model.Product, e
 	return product, nil
 }
 
-func (pu *ProductUsecase) UpdateProduct(productId int, product model.Product) error {
+func (pu *ProductUsecase) UpdateProduct(productId int, product model.Product) (model.Product, error) {
 
-	err := pu.repository.UpdateProduct(productId, product)
+	product, err := pu.repository.UpdateProduct(productId, product)
 	if err != nil {
-		return err
+		return model.Product{}, err
 	}
 
-	return nil
+	return product, nil
 }

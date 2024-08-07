@@ -95,20 +95,30 @@ func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
 	return id, nil
 }
 
-func (pr *ProductRepository) UpdateProduct(productId int, product model.Product) error {
+func (pr *ProductRepository) UpdateProduct(productId int, product model.Product) (model.Product, error) {
 
-	query, err := pr.connection.Prepare("UPDATE product SET product_name = $1, price = $2 WHERE id = $3 RETURNING id")
+	query := "UPDATE product SET product_name = $1, price = $2 WHERE id = $3 RETURNING id"
+
+	var updatedId int
+	err := pr.connection.QueryRow(query, product.Name, product.Price, productId).Scan(&updatedId)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return model.Product{}, err
 	}
 
-	err = query.QueryRow(product.Name, product.Price, productId).Scan(&productId)
+	// Verifica se o ID retornado corresponde ao ID que foi atualizado
+	if updatedId != productId {
+		return model.Product{}, fmt.Errorf("incompatibilidade de ID do produto: esperado %d mas retornou %d", productId, updatedId)
+	}
+
+	// Recupera o produto atualizado do banco de dados
+	query = "SELECT id, product_name, price FROM product WHERE id = $1"
+	var updatedProduct model.Product
+	err = pr.connection.QueryRow(query, productId).Scan(&updatedProduct.Id, &updatedProduct.Name, &updatedProduct.Price)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return model.Product{}, err
 	}
 
-	query.Close()
-	return nil
+	return updatedProduct, nil
 }

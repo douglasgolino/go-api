@@ -117,11 +117,12 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
 
-	err = p.productUsecase.UpdateProduct(productId, product)
+	updatedProduct, err := p.productUsecase.UpdateProduct(productId, product)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
+		return
 	}
 
-	ctx.JSON(http.StatusNoContent, nil)
+	ctx.JSON(http.StatusOK, updatedProduct)
 }
