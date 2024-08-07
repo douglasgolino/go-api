@@ -122,3 +122,22 @@ func (pr *ProductRepository) UpdateProduct(productId int, product model.Product)
 
 	return updatedProduct, nil
 }
+
+func (pr *ProductRepository) DeleteProduct(id_product int) (int, error) {
+
+	query := "DELETE FROM product WHERE id = $1"
+
+	result, err := pr.connection.Exec(query, id_product)
+	if err != nil {
+		fmt.Println(err)
+		return 0, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(rowsAffected), nil
+}
