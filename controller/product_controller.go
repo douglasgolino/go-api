@@ -24,7 +24,12 @@ func (p *productController) GetProducts(ctx *gin.Context) {
 
 	products, err := p.productUsecase.GetProducts()
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		response := model.Response{
+			Message: "Erro ao processar a solicitação",
+		}
+
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, products)
@@ -37,7 +42,6 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Informe o Id do produto",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -47,14 +51,16 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Id do produto precisa ser um número inteiro",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	product, err := p.productUsecase.GetProductById(productId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		response := model.Response{
+			Message: "Erro ao processar a solicitação",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -62,7 +68,6 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Produto não encontrado",
 		}
-
 		ctx.JSON(http.StatusNotFound, response)
 		return
 	}
@@ -76,13 +81,21 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&product)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		response := model.Response{
+			Message: "Solicitação Inválida " + err.Error(),
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	insertedProduct, err := p.productUsecase.CreateProduct(product)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		response := model.Response{
+			Message: "Erro ao processar a solicitação",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, insertedProduct)
@@ -95,7 +108,6 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Informe o Id do produto",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -105,7 +117,6 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Id do produto precisa ser um número inteiro",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -114,13 +125,20 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 
 	err = ctx.BindJSON(&product)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		response := model.Response{
+			Message: "Solicitação Inválida " + err.Error(),
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	updatedProduct, err := p.productUsecase.UpdateProduct(productId, product)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		response := model.Response{
+			Message: "Erro ao processar a solicitação",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -134,7 +152,6 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Informe o Id do produto",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -144,7 +161,6 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Id do produto precisa ser um número inteiro",
 		}
-
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -162,7 +178,6 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 		response := model.Response{
 			Message: "Produto não encontrado",
 		}
-
 		ctx.JSON(http.StatusNotFound, response)
 		return
 	}
