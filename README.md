@@ -1,1 +1,1 @@
-A simple API in go
+A simple API in Go for managing products.
