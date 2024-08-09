@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"go-api/model"
 	"go-api/repository"
 )
@@ -41,6 +42,10 @@ func (pu *ProductUsecase) CreateProduct(product model.Product) (model.Product, e
 }
 
 func (pu *ProductUsecase) UpdateProduct(productId int, product model.Product) (model.Product, error) {
+
+	if productId != product.Id {
+		return model.Product{}, fmt.Errorf("ID do produto no corpo da requisição (%d) não corresponde ao ID da rota (%d)", product.Id, productId)
+	}
 
 	product, err := pu.repository.UpdateProduct(productId, product)
 	if err != nil {

@@ -133,10 +133,9 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 	}
 
 	updatedProduct, err := p.productUsecase.UpdateProduct(productId, product)
-
 	if err != nil {
 		response := model.Response{
-			Message: "Erro ao processar a solicitação",
+			Message: err.Error(),
 		}
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
