@@ -30,7 +30,7 @@ func (p *productController) GetProducts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, products)
 }
 
-func (p *productController) GetProducById(ctx *gin.Context) {
+func (p *productController) GetProductById(ctx *gin.Context) {
 
 	id := ctx.Param("id_product")
 	if id == "" {
@@ -125,4 +125,51 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, updatedProduct)
+}
+
+func (p *productController) DeleteProduct(ctx *gin.Context) {
+
+	id := ctx.Param("id_product")
+	if id == "" {
+		response := model.Response{
+			Message: "Informe o Id do produto",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+	if err != nil {
+		response := model.Response{
+			Message: "Id do produto precisa ser um número inteiro",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	rowsAffected, err := p.productUsecase.DeleteProduct(productId)
+	if err != nil {
+		response := model.Response{
+			Message: "Erro ao processar a solicitação",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	if rowsAffected == 0 {
+		response := model.Response{
+			Message: "Produto não encontrado",
+		}
+
+		ctx.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	response := model.Response{
+		Message: "Produto deletado com sucesso",
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
